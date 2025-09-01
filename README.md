@@ -9,12 +9,22 @@ small as a Raspberry Pi. 📱
 
 ## Screenshots
 
-<!-- TODO: add a screenshot of the vertical feed (photo post) here -->
-<!-- TODO: add a screenshot of the vertical feed (video post, autoplay) here -->
-<!-- TODO: add a screenshot of the channels / subscriptions screen here -->
+From the live app (Ukrainian UI), as shown in the
+[DOU write-up](https://dou.ua/forums/topic/60825/):
 
-Real screenshots still need to be captured from a running instance with
-`LOCALE=en` — the UI defaults to English (see [i18n](#i18n)).
+| Photo carousel in the vertical feed | Video post in «For you» | Channel catalog & subscriptions |
+| --- | --- | --- |
+| ![Photo carousel in the feed](docs/screenshots/feed-photo-carousel.jpg) | ![Video post in the For you feed](docs/screenshots/feed-video-foryou.jpg) | ![Channel catalog with search and categories](docs/screenshots/channels-catalog.jpg) |
+
+The open-source UI defaults to English (`LOCALE=en`); see [i18n](#i18n).
+
+## Architecture overview
+
+Full stack — and what's free:
+
+![Full feed diagram: Cloudflare, Raspberry Pi, R2, Telegram API, Lapa translation](docs/architecture-scheme-en.png)
+
+Green badge = free. One-time: the Pi and the drive. Monthly: electricity only.
 
 ## Why it costs $0
 
