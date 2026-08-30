@@ -1,0 +1,289 @@
+{
+  "app": {
+    "title": "Моя стрічка",
+    "description": "Telegram Mini App — вертикальна стрічка ваших улюблених каналів",
+    "miniAppLabel": "мінізастосунок"
+  },
+  "common": {
+    "loading": "Завантаження…",
+    "close": "Закрити",
+    "back": "Назад",
+    "next": "Далі",
+    "retry": "Спробувати знову",
+    "menu": "Меню"
+  },
+  "onboarding": {
+    "interests": {
+      "headerTitle": "Теми",
+      "titlePrefix": "Що вам",
+      "titleHighlight": "цікаво?",
+      "subtitle": "Виберіть мінімум 4 теми — по них підберемо стрічку.",
+      "selectedCount": "Вибрано {{count}}. Потрібно мінімум 4.",
+      "start": "Почати",
+      "save": "Зберегти",
+      "saving": "Зберігаємо…"
+    },
+    "gate": {
+      "dbUnavailable": "База даних недоступна. Перевір POSTGRES_URL у .env.",
+      "profileNotInitialized": "Профіль не ініціалізовано. Перезавантажте сторінку.",
+      "profileLoadFailed": "Не вдалося завантажити профіль"
+    },
+    "notify": {
+      "titlePrefix": "Не пропустіть",
+      "titleHighlight": "новинки",
+      "description": "Зараз з'явиться вікно Telegram з проханням дозволити боту надсилати вам повідомлення. Якщо ви його бачите — будь ласка, дозвольте. Це також можна зробити пізніше в налаштуваннях."
+    },
+    "style": {
+      "titlePrefix": "Оберіть",
+      "titleHighlight": "тему",
+      "description": "Це впливає на зовнішній вигляд стрічки. Завжди можна змінити у налаштуваннях."
+    },
+    "stories": {
+      "skip": "Пропустити",
+      "introFeed": {
+        "title": "Привіт, це твоя стрічка",
+        "description": "Це новий спосіб дивитися Telegram-контент.",
+        "cta": "Поїхали →"
+      },
+      "introSwipe": {
+        "title": "Новий формат",
+        "description": "Свайпай пости в зручній вертикальній стрічці.",
+        "cta": "Далі →"
+      },
+      "introMix": {
+        "title": "Усе цікаве в одному місці",
+        "description": "Меми, новини, відео, ідеї та пости з каналів, які ти міг би ніколи не знайти сам.",
+        "cta": "Чудово →"
+      },
+      "introTarget": {
+        "title": "Час налаштувати стрічку",
+        "description": "Почнемо з того, що тобі реально цікаво.",
+        "cta": "Вибрати інтереси →"
+      }
+    },
+    "interestCard": {
+      "popular": "популярне"
+    }
+  },
+  "feed": {
+    "swipeBlock": {
+      "title": "Свайп заблоковано",
+      "fetchingNextPage": "Завантаження нових відео…",
+      "allViewed": "Ти переглянув усі відео",
+      "atFirstPost": "Це перший пост",
+      "swipeTooWeak": "Свайпніть впевненіше",
+      "initializing": "Ініціалізація…",
+      "generic": "Свайп заблоковано. Спробуйте ще раз."
+    },
+    "media": {
+      "unavailable": {
+        "tooLarge": "Медіа занадто велике або не кешується — свайпніть далі",
+        "temporary": "Медіа тимчасово недоступне — свайпніть далі",
+        "generic": "Медіа недоступне — свайпніть далі"
+      },
+      "hint": {
+        "cachingSlow": "Кешуємо медіа для швидшого перегляду…",
+        "caching": "Медіа кешується…",
+        "loading": "Завантаження…"
+      },
+      "cachingBadge": "Кешується",
+      "controlVideoAria": "Керувати відео",
+      "toggleCaptionAria": "Показати або приховати опис"
+    },
+    "screen": {
+      "loading": "Завантаження стрічки…",
+      "errorTitle": "Щось пішло не так",
+      "errorBody": "Не вдалося завантажити стрічку. Спробуйте пізніше.",
+      "allViewedTitle": "Ви вже подивились весь контент",
+      "emptyVideoTitle": "Поки немає відео",
+      "noSubscriptionsTitle": "Ви ще ні на кого не підписані",
+      "noSubscriptionsBody": "Підписуйтесь на канали всередині додатку, щоб створити власну стрічку.",
+      "forYou": {
+        "allViewedBody": "Нового контенту поки немає — відпочиньте трохи і повертайтесь пізніше. Ми працюємо над збільшенням доступного контенту!",
+        "emptyBody": "На жаль, контент за обраними вами категоріями ще не з'явився. Спробуйте будь ласка пізніше."
+      },
+      "subscriptions": {
+        "allViewedBody": "Нових відео від ваших підписок поки немає — загляньте пізніше.",
+        "emptyBody": "Відео з ваших підписок зʼявляться тут після кешування."
+      }
+    },
+    "card": {
+      "deletedNotice": "На жаль, медіа вже видалено з серверів Стрічки.",
+      "openOriginal": "Перейти до оригіналу в Telegram →"
+    },
+    "translation": {
+      "translated": "переклад",
+      "autoTranslated": "(авто переклад)",
+      "original": "оригінал"
+    },
+    "overlayInfo": {
+      "openChannelAria": "Відкрити канал {{title}}",
+      "unsubscribeAria": "Відписатись від {{title}}",
+      "subscribeAria": "Підписатись на {{title}}",
+      "subscribedLabel": "Підписано",
+      "subscribeLabel": "Підписатись",
+      "collapse": "згорнути"
+    },
+    "actionRail": {
+      "soundOnLabel": "Увімк.",
+      "soundLabel": "Звук",
+      "muteAria": "Вимкнути звук",
+      "unmuteAria": "Увімкнути звук",
+      "likeAria": "Лайк",
+      "unlikeAria": "Прибрати лайк",
+      "moreLabel": "Ще",
+      "moreAria": "Більше дій",
+      "shareLabel": "Поділ."
+    },
+    "actions": {
+      "share": "Поділитися",
+      "openInTelegram": "Відкрити в Telegram"
+    },
+    "tabs": {
+      "forYou": "Для вас",
+      "subscriptions": "Підписки"
+    },
+    "pullPanel": {
+      "title": "Не озирайся назад, лише вперед 😇",
+      "orTap": "Або натискай:",
+      "historyLink": "Історія всіх попередніх переглядів"
+    },
+    "channelPrivate": {
+      "title": "Канал закритий",
+      "description": "Це приватний канал, тож, можливо, ви не зможете в нього перейти.",
+      "searchHint": "Спробуйте знайти його через пошук Telegram самостійно ❤️"
+    },
+    "photoZoom": {
+      "closeAria": "Закрити збільшення",
+      "hint": "Двома пальцями — збільшити · натисніть ✕ щоб закрити"
+    },
+    "postSheet": {
+      "views_one": "{{formatted}} перегляд",
+      "views_few": "{{formatted}} перегляди",
+      "views_many": "{{formatted}} переглядів",
+      "views_other": "{{formatted}} переглядів",
+      "noText": "Без тексту"
+    },
+    "postMoreMenu": {
+      "aria": "Дії з постом",
+      "hideChannel": "Не показувати мені цей канал",
+      "goToChannel": "Перейти до каналу",
+      "download": "Завантажити медіа"
+    },
+    "deeplink": {
+      "likedQuestion": "Сподобався пост?",
+      "exploreMore": "Перейти до інших цікавинок",
+      "unavailable": "Пост недоступний або вже видалений."
+    },
+    "relativeTime": {
+      "minutes": "{{count}} хв",
+      "hours": "{{count}} год",
+      "days": "{{count}} дн"
+    },
+    "imageCarousel": {
+      "showCaptionOrZoomAria": "Показати опис або збільшити фото"
+    },
+    "swiper": {
+      "contentPreparing": "Контент готується. Зайдіть трохи пізніше."
+    }
+  },
+  "navigation": {
+    "home": "Головна",
+    "channels": "Канали",
+    "profile": "Профіль"
+  },
+  "channels": {
+    "title": "Канали",
+    "suggestButton": "+ Запропонувати",
+    "searchPlaceholder": "@канал або назва",
+    "categoryAll": "Усі",
+    "loading": "Завантаження каналів…",
+    "notFound": "Каналів не знайдено",
+    "addYours": "Хочете додати свій канал?",
+    "private": "Приватний канал",
+    "subscribed": "Підписано",
+    "subscribe": "Підписатись",
+    "telegramLink": "Telegram ↗"
+  },
+  "profile": {
+    "title": "Профіль",
+    "liked": "Вподобані",
+    "subscriptions": "Підписки",
+    "telegramMiniAppFallback": "Telegram Mini App",
+    "editInterests": "Заново обрати улюблені теми",
+    "settings": "Налаштування",
+    "support": "Підтримка",
+    "backToFeed": "До стрічки",
+    "fallbackName": "Користувач",
+    "list": {
+      "historyTitle": "Історія",
+      "emptyLiked": "Ще немає вподобаних постів.",
+      "emptyHistory": "Ще немає переглядів.",
+      "emptySubscriptions": "Ще немає підписок на канали."
+    },
+    "suggestChannel": {
+      "title": "Запропонувати канал",
+      "backToProfile": "Назад до профілю",
+      "backToChannels": "Назад до каналів",
+      "thanks": "Дякуємо!",
+      "reviewNotice": "Ми розглянемо ваш канал та додамо його до стрічки.",
+      "intro": "Вставте посилання на Telegram-канал або напишіть його назву, і ми розглянемо можливість додати його до стрічки.",
+      "channelPlaceholder": "https://t.me/channel або назва каналу",
+      "contactPlaceholder": "Ваш Telegram або e-mail для зв'язку (необов'язково)",
+      "sending": "Надсилання…",
+      "submit": "Надіслати",
+      "error": "Помилка. Спробуйте ще раз."
+    },
+    "localViewName": "Локальний перегляд"
+  },
+  "settings": {
+    "title": "Налаштування",
+    "haptic": "Тактильний відгук",
+    "notifications": {
+      "title": "Сповіщення від бота",
+      "granted": "Дозволено",
+      "requested": "Підтвердіть у вікні Telegram",
+      "idle": "Отримуйте повідомлення про новинки",
+      "enabledBadge": "Увімкнено",
+      "allow": "Дозволити"
+    },
+    "language": {
+      "title": "Мова",
+      "uk": "Українська (UI)",
+      "en": "English (UI)"
+    },
+    "appearance": {
+      "title": "Вигляд застосунку",
+      "subtitle": "Оберіть стиль інтерфейсу"
+    },
+    "hiddenChannels": {
+      "title": "Приховані канали",
+      "description": "Канали, які ви приховали зі стрічки через «Ще» на пості.",
+      "none": "Немає прихованих каналів",
+      "show": "Показати"
+    },
+    "clearLocalData": "Очистити локальні дані",
+    "resetAll": "Скинути усе",
+    "resetAllHintAriaLabel": "Що це означає?",
+    "resetAllHintText": "Ваші дані будуть повністю видалені з наших серверів. Ви почнете користування застосунком з чистого листа.",
+    "resetAllConfirmText": "Точно скинути усе? Дію не можна скасувати.",
+    "resetAllConfirming": "Скидаємо…",
+    "resetAllConfirmYes": "Так, скинути усе",
+    "resetAllCancel": "Скасувати",
+    "version": "Версія 0.1.0 (MVP)"
+  },
+  "style": {
+    "pop": {
+      "title": "Яскрава",
+      "description": "Стікери та градієнти"
+    },
+    "minimal": {
+      "title": "Мінімал",
+      "description": "Чисто й спокійно"
+    }
+  },
+  "bot": {
+    "welcome": "Привіт! Я — твоя Стрічка 👋\n\nЗбираю найцікавіше з українського Telegram в одну стрічку — відео й пости з різних куточків.\n\nБез реклами. Без ботів. Без зайвого шуму.\n\n👀 Гортай, зберігай, відкривай канали, які могли пройти повз тебе.\n\n👇 Тисни і заходь",
+    "openButton": "🎬 Відкрити Стрічку"
+  }
+}

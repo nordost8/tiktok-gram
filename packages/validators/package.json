@@ -1,0 +1,20 @@
+{
+  "name": "@tiktok-gram/validators",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@tiktok-gram/eslint-config": "workspace:*",
+    "@tiktok-gram/prettier-config": "workspace:*",
+    "@tiktok-gram/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@tiktok-gram/prettier-config"
+}

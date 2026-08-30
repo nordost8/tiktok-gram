@@ -1,0 +1,42 @@
+# env & secrets
+.env
+.env.*
+!.env.example
+!deploy/pi/.env.example
+
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build / cache
+.next/
+.turbo/
+dist/
+*.tsbuildinfo
+.cache/
+.mypy_cache/
+.pytest_cache/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.venv-tiktok/
+
+# TikTok/Telegram local session artifacts (should not exist in this repo, but
+# just in case a contributor's tooling drops one here)
+scripts/.telegram-session*
+scripts/.tiktok_session.json
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.claude/
+
+# debug screenshots
+/image.png
+/image*.png
+scripts/image.png
+scripts/image*.png

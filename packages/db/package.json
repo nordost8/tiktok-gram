@@ -1,0 +1,48 @@
+{
+  "name": "@tiktok-gram/db",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./schema": "./src/schema.ts",
+    "./select-primary-media": "./src/select-primary-media.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc",
+    "push": "pnpm with-env drizzle-kit push",
+    "studio": "pnpm with-env drizzle-kit studio",
+    "test": "node --import tsx --test src/**/*.test.ts",
+    "verify": "pnpm with-env tsx scripts/verify-step2.ts",
+    "seed": "pnpm with-env tsx seed/telegram-feed.ts",
+    "verify:seed": "pnpm with-env tsx scripts/verify-step3.ts",
+    "verify:step10": "pnpm with-env tsx scripts/verify-step10-schema.ts",
+    "verify:step10-collector": "pnpm with-env tsx scripts/verify-step10-collector.ts",
+    "verify:step10-media": "pnpm with-env tsx scripts/verify-step10-media.ts",
+    "verify:step11-schema": "pnpm with-env tsx scripts/verify-step11-schema.ts",
+    "verify:step11-minio": "pnpm with-env tsx scripts/verify-step11-minio.ts",
+    "verify:step11-collector-enqueue": "pnpm with-env tsx scripts/verify-step11-collector-enqueue.ts",
+    "verify:step11-media-api": "pnpm with-env tsx scripts/verify-step11-media-api.ts",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../.env --"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.44.7",
+    "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.826.0",
+    "drizzle-kit": "^0.31.5",
+    "tsx": "^4.21.1",
+    "@tiktok-gram/eslint-config": "workspace:*",
+    "@tiktok-gram/prettier-config": "workspace:*",
+    "@tiktok-gram/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/pg": "^8.15.6",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@tiktok-gram/prettier-config"
+}

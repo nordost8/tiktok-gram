@@ -1,0 +1,166 @@
+@import "tailwindcss";
+@import "@tiktok-gram/tailwind-config/theme";
+
+@source "../../../../packages/ui/src/*.{ts,tsx}";
+
+@theme {
+  /* tiktok-gram "Pop Kiosk" identity — iCarly web-pop × TikTok neon. */
+  --color-ink: #0b0b12;
+  --color-surface: #15151f;
+  --color-splash-magenta: #ff2e93;
+  --color-splash-violet: #8b5cff;
+  --color-splash-cyan: #00e5ff;
+  --color-pop-lime: #c6ff3d;
+  --color-pop-sunny: #ffd23d;
+  --color-pop-coral: #ff6b5e;
+}
+
+@layer base {
+  html,
+  body {
+    @apply h-full overflow-hidden overscroll-none bg-black text-white antialiased;
+  }
+}
+
+@layer utilities {
+  /* The signature Splash gradient — magenta → violet → cyan. */
+  .bg-splash {
+    background-image: linear-gradient(
+      120deg,
+      var(--color-splash-magenta) 0%,
+      var(--color-splash-violet) 52%,
+      var(--color-splash-cyan) 100%
+    );
+  }
+
+  /* Splash used as text fill. */
+  .text-splash {
+    background-image: linear-gradient(
+      120deg,
+      var(--color-splash-magenta) 0%,
+      var(--color-splash-violet) 52%,
+      var(--color-splash-cyan) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .font-display {
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  }
+}
+
+/* ── Minimal theme: strip the Pop-Kiosk flourishes app-wide ──────────────────
+   Driving these through CSS (instead of JS conditionals in every component)
+   keeps switching instant and SSR-safe — the data attribute is set pre-paint by
+   next-themes. Components only branch in JS where the MARKUP differs (icons). */
+[data-feed-style="minimal"] .text-splash {
+  background-image: none;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  -webkit-text-fill-color: currentColor;
+  color: inherit;
+}
+
+[data-feed-style="minimal"] .font-display {
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-weight: 600;
+}
+
+/* Decorative splash glows collapse to nothing in the quiet theme. */
+[data-feed-style="minimal"] .splash-glow {
+  display: none;
+}
+
+@layer utilities {
+  .safe-area-padding {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+
+  .animate-shake {
+    animation: shake 0.55s ease-in-out;
+  }
+
+  .animate-ring-pulse {
+    animation: ring-pulse 0.55s ease-out;
+  }
+
+  /* Duration is set per-instance inline (proportional to text length) — see
+     AudioTicker in FeedImageCarousel.tsx. */
+  .animate-marquee {
+    animation: marquee 8s linear infinite;
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%       { transform: translateX(-7px); }
+  30%       { transform: translateX(7px); }
+  45%       { transform: translateX(-5px); }
+  60%       { transform: translateX(5px); }
+  75%       { transform: translateX(-2px); }
+  90%       { transform: translateX(2px); }
+}
+
+@keyframes ring-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.0); border-color: theme(colors.zinc.800); }
+  25%  { box-shadow: 0 0 0 4px rgba(251, 146, 60, 0.35); border-color: theme(colors.orange.400); }
+  100% { box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.0); border-color: theme(colors.zinc.800); }
+}
+
+/* Scrolls a long audio-track title leftward so the full text is reachable on
+   a narrow screen — the track duplicates its content and loops seamlessly by
+   translating exactly half its (doubled) width. */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Fills the active carousel segment left→right over the auto-advance interval. */
+@keyframes carousel-progress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* Slow drifting + twinkling stars in the pull-down panel (FeedPullPanel). */
+@keyframes pull-star {
+  0%   { transform: translateY(0) translateX(0); opacity: 0.25; }
+  50%  { transform: translateY(-6px) translateX(3px); opacity: 0.9; }
+  100% { transform: translateY(0) translateX(0); opacity: 0.25; }
+}
+.pull-star {
+  animation-name: pull-star;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+  /* glow follows the sprite's alpha shape, not its bounding box */
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.45));
+}
+
+/* ── AppFrame: centered phone column on tablet/desktop (>=540px) ──────────────
+   Full-bleed 100vw below 540px to keep mobile behavior byte-identical.
+   Backdrop provides subtle sides (Pop-Kiosk hint vs minimal flat).
+   The frame uses transform to become a containing block for fixed descendants.
+*/
+.app-frame-backdrop {
+  background-color: #0a0a0f;
+}
+[data-feed-style="pop"] .app-frame-backdrop {
+  /* Subtle branded sides — faint splash tint over near-black */
+  background-color: #0b0b12;
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 46, 147, 0.035) 0%,
+    rgba(139, 92, 255, 0.03) 50%,
+    rgba(0, 229, 255, 0.025) 100%
+  );
+}
+[data-feed-style="minimal"] .app-frame-backdrop {
+  background-color: #0a0a0f;
+  background-image: none;
+}
+/* .app-frame width is set inline in AppFrame.tsx (width:100% + max-width:440). */

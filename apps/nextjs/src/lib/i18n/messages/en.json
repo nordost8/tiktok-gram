@@ -1,0 +1,287 @@
+{
+  "app": {
+    "title": "tiktok-gram",
+    "description": "A Telegram Mini App — a vertical feed of your favorite Telegram channels",
+    "miniAppLabel": "mini app"
+  },
+  "common": {
+    "loading": "Loading…",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "retry": "Try again",
+    "menu": "Menu"
+  },
+  "onboarding": {
+    "interests": {
+      "headerTitle": "Topics",
+      "titlePrefix": "What are you",
+      "titleHighlight": "interested in?",
+      "subtitle": "Pick at least 4 topics — we'll tailor your feed to them.",
+      "selectedCount": "{{count}} selected. Pick at least 4.",
+      "start": "Get started",
+      "save": "Save",
+      "saving": "Saving…"
+    },
+    "gate": {
+      "dbUnavailable": "The database is unavailable. Check POSTGRES_URL in .env.",
+      "profileNotInitialized": "Profile not initialized. Please reload the page.",
+      "profileLoadFailed": "Failed to load profile"
+    },
+    "notify": {
+      "titlePrefix": "Don't miss",
+      "titleHighlight": "new content",
+      "description": "A Telegram dialog will appear asking you to allow the bot to send you messages. If you see it, please allow it — you can also do this later in settings."
+    },
+    "style": {
+      "titlePrefix": "Choose a",
+      "titleHighlight": "style",
+      "description": "This changes how your feed looks. You can always change it later in settings."
+    },
+    "stories": {
+      "skip": "Skip",
+      "introFeed": {
+        "title": "Hi, this is your feed",
+        "description": "A new way to watch Telegram content.",
+        "cta": "Let's go →"
+      },
+      "introSwipe": {
+        "title": "A new format",
+        "description": "Swipe through posts in a smooth vertical feed.",
+        "cta": "Next →"
+      },
+      "introMix": {
+        "title": "Everything interesting in one place",
+        "description": "Memes, news, videos, ideas, and posts from channels you might never have found yourself.",
+        "cta": "Awesome →"
+      },
+      "introTarget": {
+        "title": "Time to set up your feed",
+        "description": "Let's start with what actually interests you.",
+        "cta": "Choose interests →"
+      }
+    },
+    "interestCard": {
+      "popular": "popular"
+    }
+  },
+  "feed": {
+    "swipeBlock": {
+      "title": "Swipe blocked",
+      "fetchingNextPage": "Loading more videos…",
+      "allViewed": "You've seen everything",
+      "atFirstPost": "This is the first post",
+      "swipeTooWeak": "Swipe with more confidence",
+      "initializing": "Initializing…",
+      "generic": "Swipe blocked. Try again."
+    },
+    "media": {
+      "unavailable": {
+        "tooLarge": "Media too large or not cacheable — swipe to continue",
+        "temporary": "Media temporarily unavailable — swipe to continue",
+        "generic": "Media unavailable — swipe to continue"
+      },
+      "hint": {
+        "cachingSlow": "Caching media for faster playback…",
+        "caching": "Caching media…",
+        "loading": "Loading…"
+      },
+      "cachingBadge": "Caching",
+      "controlVideoAria": "Control video",
+      "toggleCaptionAria": "Show or hide caption"
+    },
+    "screen": {
+      "loading": "Loading feed…",
+      "errorTitle": "Something went wrong",
+      "errorBody": "Couldn't load the feed. Try again later.",
+      "allViewedTitle": "You've seen everything",
+      "emptyVideoTitle": "No videos yet",
+      "noSubscriptionsTitle": "You're not subscribed to anyone yet",
+      "noSubscriptionsBody": "Subscribe to channels inside the app to build your own feed.",
+      "forYou": {
+        "allViewedBody": "There's no new content yet — take a break and check back later. We're working on growing the amount of available content!",
+        "emptyBody": "Unfortunately there's no content yet for your chosen topics. Please check back later."
+      },
+      "subscriptions": {
+        "allViewedBody": "No new videos from your subscriptions yet — check back later.",
+        "emptyBody": "Videos from your subscriptions will show up here once they're cached."
+      }
+    },
+    "card": {
+      "deletedNotice": "This media has been removed from tiktok-gram's servers.",
+      "openOriginal": "Go to the original on Telegram →"
+    },
+    "translation": {
+      "translated": "translated",
+      "autoTranslated": "(auto-translated)",
+      "original": "original"
+    },
+    "overlayInfo": {
+      "openChannelAria": "Open channel {{title}}",
+      "unsubscribeAria": "Unsubscribe from {{title}}",
+      "subscribeAria": "Subscribe to {{title}}",
+      "subscribedLabel": "Subscribed",
+      "subscribeLabel": "Subscribe",
+      "collapse": "collapse"
+    },
+    "actionRail": {
+      "soundOnLabel": "On",
+      "soundLabel": "Sound",
+      "muteAria": "Mute sound",
+      "unmuteAria": "Unmute sound",
+      "likeAria": "Like",
+      "unlikeAria": "Remove like",
+      "moreLabel": "More",
+      "moreAria": "More actions",
+      "shareLabel": "Share"
+    },
+    "actions": {
+      "share": "Share",
+      "openInTelegram": "Open in Telegram"
+    },
+    "tabs": {
+      "forYou": "For You",
+      "subscriptions": "Subscriptions"
+    },
+    "pullPanel": {
+      "title": "Don't look back, only forward 😇",
+      "orTap": "Or tap:",
+      "historyLink": "History of everything you've watched"
+    },
+    "channelPrivate": {
+      "title": "Channel is private",
+      "description": "This is a private channel, so you might not be able to open it.",
+      "searchHint": "Try finding it yourself via Telegram search ❤️"
+    },
+    "photoZoom": {
+      "closeAria": "Close zoom",
+      "hint": "Pinch with two fingers to zoom · tap ✕ to close"
+    },
+    "postSheet": {
+      "views_one": "{{formatted}} view",
+      "views_other": "{{formatted}} views",
+      "noText": "No text"
+    },
+    "postMoreMenu": {
+      "aria": "Post actions",
+      "hideChannel": "Don't show me this channel",
+      "goToChannel": "Go to channel",
+      "download": "Download media"
+    },
+    "deeplink": {
+      "likedQuestion": "Liked this post?",
+      "exploreMore": "Explore more",
+      "unavailable": "This post is unavailable or has been removed."
+    },
+    "relativeTime": {
+      "minutes": "{{count}}m",
+      "hours": "{{count}}h",
+      "days": "{{count}}d"
+    },
+    "imageCarousel": {
+      "showCaptionOrZoomAria": "Show caption or zoom photo"
+    },
+    "swiper": {
+      "contentPreparing": "Content is being prepared. Check back soon."
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "channels": "Channels",
+    "profile": "Profile"
+  },
+  "channels": {
+    "title": "Channels",
+    "suggestButton": "+ Suggest",
+    "searchPlaceholder": "@channel or name",
+    "categoryAll": "All",
+    "loading": "Loading channels…",
+    "notFound": "No channels found",
+    "addYours": "Want to add your own channel?",
+    "private": "Private channel",
+    "subscribed": "Subscribed",
+    "subscribe": "Subscribe",
+    "telegramLink": "Telegram ↗"
+  },
+  "profile": {
+    "title": "Profile",
+    "liked": "Liked",
+    "subscriptions": "Subscriptions",
+    "telegramMiniAppFallback": "Telegram Mini App",
+    "editInterests": "Update your favorite topics",
+    "settings": "Settings",
+    "support": "Support",
+    "backToFeed": "Back to feed",
+    "fallbackName": "User",
+    "list": {
+      "historyTitle": "History",
+      "emptyLiked": "No liked posts yet.",
+      "emptyHistory": "No views yet.",
+      "emptySubscriptions": "No channel subscriptions yet."
+    },
+    "suggestChannel": {
+      "title": "Suggest a channel",
+      "backToProfile": "Back to profile",
+      "backToChannels": "Back to channels",
+      "thanks": "Thanks!",
+      "reviewNotice": "We'll review your channel and add it to the feed.",
+      "intro": "Paste a link to a Telegram channel or just write its name, and we'll consider adding it to the feed.",
+      "channelPlaceholder": "https://t.me/channel or channel name",
+      "contactPlaceholder": "Your Telegram or email for contact (optional)",
+      "sending": "Sending…",
+      "submit": "Submit",
+      "error": "Something went wrong. Please try again."
+    },
+    "localViewName": "Local view"
+  },
+  "settings": {
+    "title": "Settings",
+    "haptic": "Haptic feedback",
+    "notifications": {
+      "title": "Bot notifications",
+      "granted": "Allowed",
+      "requested": "Confirm in the Telegram dialog",
+      "idle": "Get notified about new content",
+      "enabledBadge": "Enabled",
+      "allow": "Allow"
+    },
+    "language": {
+      "title": "Language",
+      "uk": "Ukrainian (UI)",
+      "en": "English (UI)"
+    },
+    "appearance": {
+      "title": "App appearance",
+      "subtitle": "Choose your interface style"
+    },
+    "hiddenChannels": {
+      "title": "Hidden channels",
+      "description": "Channels you've hidden from the feed via \"More\" on a post.",
+      "none": "No hidden channels",
+      "show": "Show"
+    },
+    "clearLocalData": "Clear local data",
+    "resetAll": "Reset everything",
+    "resetAllHintAriaLabel": "What does this mean?",
+    "resetAllHintText": "Your data will be completely deleted from our servers. You'll start using the app with a clean slate.",
+    "resetAllConfirmText": "Really reset everything? This action can't be undone.",
+    "resetAllConfirming": "Resetting…",
+    "resetAllConfirmYes": "Yes, reset everything",
+    "resetAllCancel": "Cancel",
+    "version": "Version 0.1.0 (MVP)"
+  },
+  "style": {
+    "pop": {
+      "title": "Vivid",
+      "description": "Stickers and gradients"
+    },
+    "minimal": {
+      "title": "Minimal",
+      "description": "Clean and calm"
+    }
+  },
+  "bot": {
+    "welcome": "Hey! I'm your Feed 👋\n\nI gather the best of Ukrainian Telegram into one feed — videos and posts from every corner.\n\nNo ads. No bots. No unnecessary noise.\n\n👀 Scroll, save, and discover channels you might have missed.\n\n👇 Tap in and take a look",
+    "openButton": "🎬 Open the Feed"
+  }
+}

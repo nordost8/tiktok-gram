@@ -1,0 +1,16 @@
+node_modules
+**/node_modules
+.git
+.next
+**/.next
+.cache
+**/.cache
+examples
+plan
+design-reference
+.cursor
+*.md
+.env
+.env.*
+!.env.example
+deploy/pi/.env

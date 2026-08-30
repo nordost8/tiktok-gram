@@ -1,0 +1,53 @@
+# Push to main -> build ARM64 images -> GHCR. Optional: point your production
+# compose at ghcr.io/<your-username>/tiktok-gram-*:latest instead of building
+# locally (see docs/setup/deploy.md).
+name: Build and Push to GHCR
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: tiktok-gram-web
+            dockerfile: docker/nextjs/Dockerfile
+          - image: tiktok-gram-collector
+            dockerfile: docker/collector/Dockerfile
+          - image: tiktok-gram-media-worker
+            dockerfile: docker/media-worker/Dockerfile
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push ${{ matrix.image }}
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          push: true
+          platforms: linux/arm64
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:latest
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

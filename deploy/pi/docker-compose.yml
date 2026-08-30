@@ -1,0 +1,359 @@
+# tiktok-gram stack — every runtime service in Docker, including its own
+# Postgres and Redis (no external stack to depend on).
+#
+# Usage:
+#   cp .env.example .env   # fill in the values, see docs/setup/deploy.md
+#   docker compose up -d
+#   docker compose run --rm collector
+#   docker compose run --rm media-cleanup
+#
+# Host exposes Caddy on TIKTOK_GRAM_HTTP_PORT (default 3090).
+# Media stored in Cloudflare R2 (S3_ENDPOINT in .env) — see docs/setup/cloudflare-r2.md.
+
+name: tiktok-gram
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: tiktok-gram-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tiktok_gram_app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-tiktok_gram}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - tiktok_gram_internal
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+
+  redis:
+    image: redis:7-alpine
+    container_name: tiktok-gram-redis
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    networks:
+      - tiktok_gram_internal
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+
+  caddy:
+    image: caddy:2.11.3-alpine
+    container_name: tiktok-gram-caddy
+    restart: unless-stopped
+    ports:
+      - "${TIKTOK_GRAM_HTTP_PORT:-3090}:80"
+    environment:
+      TIKTOK_GRAM_SITE_ADDRESS: ${TIKTOK_GRAM_SITE_ADDRESS:-:80}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - tiktok_gram_internal
+    depends_on:
+      web:
+        condition: service_started
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+
+  web:
+    build:
+      context: ../..
+      dockerfile: docker/nextjs/Dockerfile
+    image: ${WEB_IMAGE:-tiktok-gram-web:latest}
+    container_name: tiktok-gram-web
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      POSTGRES_URL: ${POSTGRES_URL}
+      REDIS_URL: ${REDIS_URL}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      S3_BUCKET: ${S3_BUCKET:-tiktok-gram-media}
+      S3_REGION: ${S3_REGION:-auto}
+      SITE_URL: ${SITE_URL:-}
+      LOCALE: ${LOCALE:-en}
+      SUPPORT_URL: ${SUPPORT_URL:-}
+      COLLECTOR_VIDEO_ONLY: ${COLLECTOR_VIDEO_ONLY:-1}
+      FEED_ALLOW_PHOTOS: ${FEED_ALLOW_PHOTOS:-0}
+    expose:
+      - "3000"
+    networks:
+      - tiktok_gram_internal
+    depends_on:
+      - postgres
+      - redis
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  media-worker:
+    build:
+      context: ../..
+      dockerfile: docker/media-worker/Dockerfile
+    image: ${MEDIA_WORKER_IMAGE:-tiktok-gram-media-worker:latest}
+    container_name: tiktok-gram-media-worker
+    env_file:
+      - .env
+    environment:
+      POSTGRES_URL: ${POSTGRES_URL}
+      REDIS_URL: ${REDIS_URL}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      S3_BUCKET: ${S3_BUCKET:-tiktok-gram-media}
+      S3_REGION: ${S3_REGION:-auto}
+      TELEGRAM_API_ID: ${TELEGRAM_API_ID}
+      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH}
+      COLLECTOR_VIDEO_ONLY: ${COLLECTOR_VIDEO_ONLY:-1}
+      # Music enrichment for photo posts — OFF by default. Flip
+      # MUSIC_ENRICHMENT_ENABLED=1 (with FEED_ALLOW_PHOTOS=1) to activate the
+      # music-enrichment service. See docs/music-enrichment.md — the
+      # recommendation logic is a documented stub by default, so every
+      # enriched photo post gets the same placeholder track until you
+      # implement a real one.
+      MUSIC_ENRICHMENT_ENABLED: ${MUSIC_ENRICHMENT_ENABLED:-0}
+      CAPTION_TRANSLATE_ENABLED: ${CAPTION_TRANSLATE_ENABLED:-0}
+      LAPATHONIIA_API_KEY: ${LAPATHONIIA_API_KEY:-}
+      LAPATHONIIA_BASE_URL: ${LAPATHONIIA_BASE_URL:-}
+      LAPATHONIIA_TRANSLATE_MODEL: ${LAPATHONIIA_TRANSLATE_MODEL:-}
+      FASTTEXT_MODEL_PATH: /app/models/lid.176.ftz
+      MUSIC_ENRICHMENT_URL: ${MUSIC_ENRICHMENT_URL:-http://music-enrichment-api:8090}
+      MUSIC_ENRICHMENT_CALLBACK_URL: ${MUSIC_ENRICHMENT_CALLBACK_URL:-http://tiktok-gram-music-callback:8088/v1/music-enrichment-callback}
+      TIKTOK_GRAM_MEDIA_LOG: /app/logs/media-worker.log
+    volumes:
+      - media_worker_logs:/app/logs
+    networks:
+      - tiktok_gram_internal
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  # Receives the music-enrichment service's async result callbacks and stores
+  # the picked mp3 + track metadata on the post. Dormant unless music
+  # enrichment is turned on (MUSIC_ENRICHMENT_ENABLED=1 on the media-worker);
+  # this container just sits idle otherwise.
+  music-callback:
+    build:
+      context: ../..
+      dockerfile: docker/media-worker/Dockerfile
+    image: ${MEDIA_WORKER_IMAGE:-tiktok-gram-media-worker:latest}
+    container_name: tiktok-gram-music-callback
+    env_file:
+      - .env
+    environment:
+      POSTGRES_URL: ${POSTGRES_URL}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      S3_BUCKET: ${S3_BUCKET:-tiktok-gram-media}
+      S3_REGION: ${S3_REGION:-auto}
+      CAPTION_TRANSLATE_ENABLED: ${CAPTION_TRANSLATE_ENABLED:-0}
+      LAPATHONIIA_API_KEY: ${LAPATHONIIA_API_KEY:-}
+      LAPATHONIIA_BASE_URL: ${LAPATHONIIA_BASE_URL:-}
+      LAPATHONIIA_TRANSLATE_MODEL: ${LAPATHONIIA_TRANSLATE_MODEL:-}
+      FASTTEXT_MODEL_PATH: /app/models/lid.176.ftz
+      TIKTOK_GRAM_MEDIA_LOG: /app/logs/media-worker.log
+    command:
+      [
+        "uvicorn",
+        "music_enrich_callback:app",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "8088",
+        "--app-dir",
+        "/app/scripts",
+      ]
+    expose:
+      - "8088"
+    volumes:
+      - media_worker_logs:/app/logs
+    networks:
+      - tiktok_gram_internal
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  media-cleanup:
+    build:
+      context: ../..
+      dockerfile: docker/media-worker/Dockerfile
+    image: ${MEDIA_WORKER_IMAGE:-tiktok-gram-media-worker:latest}
+    container_name: tiktok-gram-media-cleanup-run
+    profiles:
+      - cron
+    env_file:
+      - .env
+    environment:
+      POSTGRES_URL: ${POSTGRES_URL}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      S3_BUCKET: ${S3_BUCKET:-tiktok-gram-media}
+      S3_REGION: ${S3_REGION:-auto}
+      TIKTOK_GRAM_MEDIA_LOG: /app/logs/media-worker.log
+    volumes:
+      - media_worker_logs:/app/logs
+    entrypoint: ["python", "/app/scripts/media-cache-cleanup-run.py"]
+    networks:
+      - tiktok_gram_internal
+    depends_on:
+      - postgres
+    restart: "no"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+
+  collector:
+    build:
+      context: ../..
+      dockerfile: docker/collector/Dockerfile
+    image: ${COLLECTOR_IMAGE:-tiktok-gram-collector:latest}
+    profiles:
+      - cron
+    env_file:
+      - .env
+    environment:
+      POSTGRES_URL: ${POSTGRES_URL}
+      REDIS_URL: ${REDIS_URL}
+      TELEGRAM_API_ID: ${TELEGRAM_API_ID}
+      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH}
+      COLLECTOR_LIMIT: ${COLLECTOR_LIMIT:-15}
+      COLLECTOR_VIDEO_ONLY: ${COLLECTOR_VIDEO_ONLY:-1}
+    networks:
+      - tiktok_gram_internal
+    depends_on:
+      - postgres
+      - redis
+    restart: "no"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+
+  # Cron reconciler (safety net) for music enrichment of photo posts. Runs
+  # every 10 min via host crontab + --profile cron. Pure dry-run when
+  # MUSIC_ENRICHMENT_ENABLED != 1.
+  music-enrich:
+    build:
+      context: ../..
+      dockerfile: docker/media-worker/Dockerfile
+    image: ${MEDIA_WORKER_IMAGE:-tiktok-gram-media-worker:latest}
+    container_name: tiktok-gram-music-enrich-run
+    profiles:
+      - cron
+    env_file:
+      - .env
+    environment:
+      POSTGRES_URL: ${POSTGRES_URL}
+      REDIS_URL: ${REDIS_URL}
+      S3_ENDPOINT: ${S3_ENDPOINT}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      S3_BUCKET: ${S3_BUCKET:-tiktok-gram-media}
+      S3_REGION: ${S3_REGION:-auto}
+      MUSIC_ENRICHMENT_ENABLED: ${MUSIC_ENRICHMENT_ENABLED:-0}
+      MUSIC_ENRICHMENT_URL: ${MUSIC_ENRICHMENT_URL:-http://music-enrichment-api:8090}
+      MUSIC_ENRICHMENT_CALLBACK_URL: ${MUSIC_ENRICHMENT_CALLBACK_URL:-http://tiktok-gram-music-callback:8088/v1/music-enrichment-callback}
+      MUSIC_ENRICH_BATCH: ${MUSIC_ENRICH_BATCH:-5}
+      MUSIC_PENDING_STUCK_MINUTES: ${MUSIC_PENDING_STUCK_MINUTES:-30}
+      TIKTOK_GRAM_MEDIA_LOG: /app/logs/media-worker.log
+    volumes:
+      - media_worker_logs:/app/logs
+    entrypoint: ["python", "/app/scripts/music_enrich_cron.py"]
+    networks:
+      - tiktok_gram_internal
+    depends_on:
+      - postgres
+      - redis
+    restart: "no"
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
+
+  music-enrichment-api:
+    build:
+      context: ../..
+      dockerfile: services/music-enrichment/docker/Dockerfile
+    image: tiktok-gram-music-enrichment:latest
+    container_name: tiktok-gram-music-enrichment-api
+    command: ["api"]
+    env_file:
+      - .env
+    environment:
+      MUSIC_REDIS_URL: redis://redis:6379/1
+      MUSIC_WORK_DIR: /data/jobs
+      MUSIC_PUBLIC_BASE_URL: http://music-enrichment-api:8090
+    expose:
+      - "8090"
+    volumes:
+      - music_jobs:/data/jobs
+    networks:
+      - tiktok_gram_internal
+    depends_on:
+      - redis
+    restart: unless-stopped
+    labels:
+      # Locally-built image (tiktok-gram-music-enrichment:latest, no registry).
+      # Watchtower MUST ignore it — otherwise it tries to pull it from Docker
+      # Hub every poll (401). Rebuild via `docker compose up -d --build` when
+      # services/music-enrichment changes.
+      - "com.centurylinklabs.watchtower.enable=false"
+
+  music-enrichment-worker:
+    build:
+      context: ../..
+      dockerfile: services/music-enrichment/docker/Dockerfile
+    image: tiktok-gram-music-enrichment:latest
+    container_name: tiktok-gram-music-enrichment-worker
+    init: true
+    command: ["worker"]
+    # The worker role runs no HTTP server, so the image's /health curl check
+    # never passes — disable it (otherwise the container shows perpetually
+    # "unhealthy").
+    healthcheck:
+      disable: true
+    env_file:
+      - .env
+    environment:
+      MUSIC_REDIS_URL: redis://redis:6379/1
+      MUSIC_WORK_DIR: /data/jobs
+      MUSIC_PUBLIC_BASE_URL: http://music-enrichment-api:8090
+    volumes:
+      - music_jobs:/data/jobs
+    networks:
+      - tiktok_gram_internal
+    depends_on:
+      - redis
+    restart: unless-stopped
+    labels:
+      # Locally-built image — watchtower must ignore (see the api note above).
+      - "com.centurylinklabs.watchtower.enable=false"
+
+volumes:
+  postgres_data:
+    name: tiktok_gram_postgres_data
+  redis_data:
+    name: tiktok_gram_redis_data
+  caddy_data:
+    name: tiktok_gram_caddy_data
+  caddy_config:
+    name: tiktok_gram_caddy_config
+  media_worker_logs:
+    name: tiktok_gram_media_worker_logs
+  music_jobs:
+    name: tiktok_gram_music_jobs
+
+networks:
+  tiktok_gram_internal:
+    name: tiktok_gram_internal

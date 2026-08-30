@@ -1,0 +1,7 @@
+{
+  "name": "@tiktok-gram/tsconfig",
+  "private": true,
+  "files": [
+    "*.json"
+  ]
+}

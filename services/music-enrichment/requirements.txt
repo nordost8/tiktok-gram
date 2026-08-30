@@ -1,0 +1,12 @@
+# music-enrichment service runtime + tooling deps.
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+pydantic==2.10.4
+pydantic-settings==2.7.1
+structlog==24.4.0
+redis==5.2.1
+httpx==0.28.1
+
+# Tooling: the launcher runs the strict mypy gate before booting any role.
+mypy==1.14.1

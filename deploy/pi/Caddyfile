@@ -1,0 +1,16 @@
+# Fronts the web container. Behind a reverse proxy (e.g. Cloudflare Tunnel) →
+# http://127.0.0.1:{$TIKTOK_GRAM_HTTP_PORT} (see .env). For direct HTTPS with
+# your own domain, set TIKTOK_GRAM_SITE_ADDRESS and ACME_EMAIL in .env instead.
+
+:80 {
+	encode gzip zstd
+	reverse_proxy tiktok-gram-web:3000
+}
+
+# Plain http:// with no auto-redirect to HTTPS — appropriate when TLS is
+# already terminated upstream (e.g. a tunnel). If you're serving HTTPS
+# directly from Caddy, drop the "http://" scheme below.
+http://{$TIKTOK_GRAM_SITE_ADDRESS} {
+	encode gzip zstd
+	reverse_proxy tiktok-gram-web:3000
+}
