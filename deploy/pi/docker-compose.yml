@@ -122,6 +122,12 @@ services:
       # implement a real one.
       MUSIC_ENRICHMENT_ENABLED: ${MUSIC_ENRICHMENT_ENABLED:-0}
       CAPTION_TRANSLATE_ENABLED: ${CAPTION_TRANSLATE_ENABLED:-0}
+      # Optional caption translation — any OpenAI-compatible LLM (OpenAI, DeepSeek,
+      # local Ollama/vLLM, OpenRouter for Anthropic, …). Lapa on the diagram is
+      # just one example. See README § Caption translation.
+      CAPTION_TRANSLATE_API_KEY: ${CAPTION_TRANSLATE_API_KEY:-}
+      CAPTION_TRANSLATE_BASE_URL: ${CAPTION_TRANSLATE_BASE_URL:-}
+      CAPTION_TRANSLATE_MODEL: ${CAPTION_TRANSLATE_MODEL:-}
       LAPATHONIIA_API_KEY: ${LAPATHONIIA_API_KEY:-}
       LAPATHONIIA_BASE_URL: ${LAPATHONIIA_BASE_URL:-}
       LAPATHONIIA_TRANSLATE_MODEL: ${LAPATHONIIA_TRANSLATE_MODEL:-}
@@ -160,6 +166,12 @@ services:
       S3_BUCKET: ${S3_BUCKET:-tiktok-gram-media}
       S3_REGION: ${S3_REGION:-auto}
       CAPTION_TRANSLATE_ENABLED: ${CAPTION_TRANSLATE_ENABLED:-0}
+      # Optional caption translation — any OpenAI-compatible LLM (OpenAI, DeepSeek,
+      # local Ollama/vLLM, OpenRouter for Anthropic, …). Lapa on the diagram is
+      # just one example. See README § Caption translation.
+      CAPTION_TRANSLATE_API_KEY: ${CAPTION_TRANSLATE_API_KEY:-}
+      CAPTION_TRANSLATE_BASE_URL: ${CAPTION_TRANSLATE_BASE_URL:-}
+      CAPTION_TRANSLATE_MODEL: ${CAPTION_TRANSLATE_MODEL:-}
       LAPATHONIIA_API_KEY: ${LAPATHONIIA_API_KEY:-}
       LAPATHONIIA_BASE_URL: ${LAPATHONIIA_BASE_URL:-}
       LAPATHONIIA_TRANSLATE_MODEL: ${LAPATHONIIA_TRANSLATE_MODEL:-}

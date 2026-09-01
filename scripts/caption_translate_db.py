@@ -1,4 +1,4 @@
-"""Caption language detect + translate pipeline (fastText + Lapathoniia)."""
+"""Caption language detect + translate pipeline (fastText + optional LLM)."""
 from __future__ import annotations
 
 import os
@@ -157,7 +157,7 @@ def maybe_translate_post_caption(desc_id: str) -> dict[str, Any]:
         )
         translated = translate_to_ukrainian(body, source_lang=detect.language)
         if not translated:
-            _mark_failed(desc_id, error="lapathoniia_empty_or_error")
+            _mark_failed(desc_id, error="llm_translate_empty_or_error")
             return {"ok": False, "error": "translate_failed"}
 
         _mark_ready(desc_id, lang=detect.language, translation=translated)

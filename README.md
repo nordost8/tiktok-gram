@@ -9,22 +9,26 @@ small as a Raspberry Pi. 📱
 
 ## Screenshots
 
-From the live app (Ukrainian UI), as shown in the
+The **default UI language is English** (`LOCALE=en`). The screenshots below
+show the **Ukrainian** interface from a live deployment — optional, switch
+with `LOCALE=uk` (see [i18n](#i18n)). Taken from the
 [DOU write-up](https://dou.ua/forums/topic/60825/):
 
 | Photo carousel in the vertical feed | Video post in «For you» | Channel catalog & subscriptions |
 | --- | --- | --- |
 | ![Photo carousel in the feed](docs/screenshots/feed-photo-carousel.jpg) | ![Video post in the For you feed](docs/screenshots/feed-video-foryou.jpg) | ![Channel catalog with search and categories](docs/screenshots/channels-catalog.jpg) |
 
-The open-source UI defaults to English (`LOCALE=en`); see [i18n](#i18n).
-
 ## Architecture overview
 
 Full stack — and what's free:
 
-![Full feed diagram: Cloudflare, Raspberry Pi, R2, Telegram API, Lapa translation](docs/architecture-scheme-en.png)
+![Full feed diagram: Cloudflare, Raspberry Pi, R2, Telegram API, optional LLM translation](docs/architecture-scheme-en.png)
 
 Green badge = free. One-time: the Pi and the drive. Monthly: electricity only.
+
+The **Lapa · LapaLLM** box on the diagram is **one example** of the optional
+caption-translation step — not a required vendor. Plug in any
+OpenAI-compatible LLM instead (see [Caption translation](#caption-translation)).
 
 ## Why it costs $0
 
@@ -88,6 +92,9 @@ Optional: photo-only posts ──▶ music-enrichment service ──▶ backgrou
   collection.
 - An optional **music-enrichment service** can attach a background track to
   photo-only posts — see [Music enrichment](#music-enrichment) below.
+- An optional **caption-translation pipeline** (fastText language detection +
+  any OpenAI-compatible LLM) can rewrite non-English post text — off by
+  default; see [Caption translation](#caption-translation) below.
 
 Full detail, including what's stateful vs. stateless and what each
 `docker-compose.yml` service does: [`docs/architecture.md`](docs/architecture.md).
@@ -115,6 +122,34 @@ pipeline work end-to-end before writing your own recommender by filling in
 six clearly-commented functions. A real
 implementation is **not included**. Full story:
 [`docs/music-enrichment.md`](docs/music-enrichment.md).
+
+## Caption translation
+
+When `CAPTION_TRANSLATE_ENABLED=1`, the media-worker detects the language of
+each post caption (fastText) and, when needed, sends it to an **LLM you
+choose** via a standard OpenAI-compatible `/chat/completions` API.
+
+**Lapa/LapaLLM on the architecture diagram is only an example** — the code has
+no hard dependency on it. Use whichever provider you prefer:
+
+| Provider | Typical `CAPTION_TRANSLATE_BASE_URL` | Notes |
+| --- | --- | --- |
+| OpenAI (ChatGPT) | `https://api.openai.com/v1` | Default in code if unset |
+| DeepSeek | `https://api.deepseek.com/v1` | OpenAI-compatible |
+| Local (Ollama, vLLM, …) | `http://localhost:11434/v1` | Self-hosted, no API bill |
+| Anthropic (Claude) | via [OpenRouter](https://openrouter.ai/) or LiteLLM | Native Anthropic API is not OpenAI-shaped; use a gateway |
+
+```bash
+CAPTION_TRANSLATE_ENABLED=1
+CAPTION_TRANSLATE_API_KEY=sk-...          # or your provider's key
+CAPTION_TRANSLATE_BASE_URL=https://api.openai.com/v1
+CAPTION_TRANSLATE_MODEL=gpt-4o-mini
+```
+
+The default system prompt in
+[`scripts/caption_translate_lapa.py`](scripts/caption_translate_lapa.py)
+translates into **Ukrainian**; edit it to target any language. Legacy env
+names `LAPATHONIIA_*` still work as aliases.
 
 ## i18n
 

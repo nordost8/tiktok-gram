@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Headless E2E test: fastText detect + Lapathoniia translate on selected posts.
+"""Headless E2E test: fastText detect + LLM translate on selected posts.
 
 Usage:
-  CAPTION_TRANSLATE_ENABLED=1 LAPATHONIIA_API_KEY=... FASTTEXT_MODEL_PATH=... \\
+  CAPTION_TRANSLATE_ENABLED=1 CAPTION_TRANSLATE_API_KEY=... FASTTEXT_MODEL_PATH=... \\
     python scripts/test_caption_translate_e2e.py
 
 Reads POST_IDS from env (comma-separated) or uses built-in test set.
@@ -81,7 +81,7 @@ def main() -> int:
             preview = translate_to_ukrainian(body, source_lang=detect.language)
             entry["translate_preview"] = (preview or "")[:200]
             if not preview:
-                print(f"FAIL {desc_id}: Lapathoniia returned empty")
+                print(f"FAIL {desc_id}: LLM returned empty translation")
                 failures += 1
             else:
                 # Full pipeline (writes DB)

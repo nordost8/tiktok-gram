@@ -1,4 +1,19 @@
-"""Translate post caption to Ukrainian via Lapathoniia (OpenAI-compatible API)."""
+"""Translate post captions via any OpenAI-compatible chat-completions API.
+
+Provider is entirely your choice: OpenAI (ChatGPT), DeepSeek, a local LLM
+(Ollama, vLLM, llama.cpp server), OpenRouter, etc. Lapa/LapaLLM is only the
+example shown in the architecture diagram — not a dependency.
+
+Env vars (``CAPTION_TRANSLATE_*`` preferred; ``LAPATHONIIA_*`` kept as aliases):
+
+- ``CAPTION_TRANSLATE_API_KEY`` / ``LAPATHONIIA_API_KEY`` — Bearer token
+- ``CAPTION_TRANSLATE_BASE_URL`` / ``LAPATHONIIA_BASE_URL`` — API root, e.g.
+  ``https://api.openai.com/v1``, ``https://api.deepseek.com/v1``,
+  ``http://localhost:11434/v1`` (Ollama)
+- ``CAPTION_TRANSLATE_MODEL`` / ``LAPATHONIIA_TRANSLATE_MODEL`` — model id
+
+Edit the system prompt below to change the target language (default: Ukrainian).
+"""
 from __future__ import annotations
 
 import json
@@ -8,16 +23,29 @@ from typing import Any
 
 import httpx
 
-DEFAULT_BASE_URL = "https://api.lapathoniia.top/v1"
-DEFAULT_MODEL = "LapaLLM-Gemma-3-12B-instruct"
+DEFAULT_BASE_URL = "https://api.openai.com/v1"
+DEFAULT_MODEL = "gpt-4o-mini"
+# Example alternatives (set via CAPTION_TRANSLATE_BASE_URL / _MODEL):
+#   DeepSeek  — https://api.deepseek.com/v1  + deepseek-chat
+#   Local     — http://localhost:11434/v1    + your Ollama model name
+#   Lapa      — https://api.lapathoniia.top/v1 + LapaLLM-Gemma-3-12B-instruct
+# Anthropic Claude needs an OpenAI-compatible gateway (OpenRouter, LiteLLM, …).
+
+
+def _env(*names: str) -> str | None:
+    for name in names:
+        value = os.environ.get(name, "").strip()
+        if value:
+            return value
+    return None
 
 
 def _api_key() -> str | None:
-    return os.environ.get("LAPATHONIIA_API_KEY", "").strip() or None
+    return _env("CAPTION_TRANSLATE_API_KEY", "LAPATHONIIA_API_KEY")
 
 
 def _model() -> str:
-    return os.environ.get("LAPATHONIIA_TRANSLATE_MODEL", "").strip() or DEFAULT_MODEL
+    return _env("CAPTION_TRANSLATE_MODEL", "LAPATHONIIA_TRANSLATE_MODEL") or DEFAULT_MODEL
 
 
 def _parse_json_content(raw: str) -> dict[str, Any] | None:
@@ -46,7 +74,9 @@ def translate_to_ukrainian(text: str, *, source_lang: str) -> str | None:
     )
     user = f"Мова джерела (ISO): {source_lang}\n\nТекст:\n{text[:4000]}"
 
-    base = os.environ.get("LAPATHONIIA_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
+    base = (
+        _env("CAPTION_TRANSLATE_BASE_URL", "LAPATHONIIA_BASE_URL") or DEFAULT_BASE_URL
+    ).rstrip("/")
     with httpx.Client(timeout=60.0) as client:
         resp = client.post(
             f"{base}/chat/completions",
